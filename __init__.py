@@ -7,6 +7,35 @@ import sqlite3
                                                                                                                                        
 app = Flask(__name__)   
 
+@app.route('/commits-data/')
+def get_commits_data():
+    # URL de l'API GitHub pour les commits
+    url = "https://api.github.com/repos/OpenRSI/5MCSI_Metriques/commits"
+    
+    try:
+        # Récupérer les données depuis l'API GitHub
+        response = requests.get(url)
+        response.raise_for_status()  # Vérifie les erreurs HTTP
+        commits = response.json()
+
+        # Extraire les minutes des dates des commits
+        minutes = []
+        for commit in commits:
+            date_string = commit['commit']['author']['date']
+            date_object = datetime.strptime(date_string, '%Y-%m-%dT%H:%M:%SZ')
+            minutes.append(date_object.minute)
+
+        # Compter les occurrences des minutes
+        minutes_count = Counter(minutes)
+
+        # Formater les données pour les graphiques
+        results = [{'minute': k, 'count': v} for k, v in sorted(minutes_count.items())]
+
+        return jsonify(results=results)
+    
+    except requests.RequestException as e:
+        return jsonify({'error': str(e)})
+
 @app.route('/')
 def hello_world():
     return render_template('hello.html') #comm
@@ -34,6 +63,7 @@ def mongraphique():
 @app.route("/histogramme/")
 def histogramme():
     return render_template("histogramme.html")
+
 
 
 
