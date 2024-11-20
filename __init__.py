@@ -12,8 +12,8 @@ def hello_world():
     return render_template('hello.html') #comm
                                                                                                                                        
 @app.route("/contact/")
-def MaPremiereAPI():
-    return "<h2>Ma page de contact</h2>"
+def contact():
+    return render_template("contact.html")
 
 @app.route('/tawarano/')
 def meteo():
@@ -35,9 +35,7 @@ def mongraphique():
 def histogramme():
     return render_template("histogramme.html")
 
-@app.route("/contact/")
-def contact():
-    return render_template("contact.html")
+
 
 
   
